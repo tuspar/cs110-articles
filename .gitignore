@@ -8,5 +8,9 @@ pyvenv.cfg
 # Data
 /data
 
+#Plotly
+/etc
+/share
+
 # Misc
 **/__pycache__

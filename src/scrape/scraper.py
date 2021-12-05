@@ -35,7 +35,7 @@ def find_all(tag: str, data: str) -> list:
     for element in elements:
         map = {
             'element': element, 
-            'header': __text_between(element, f'<{tag} ', f'>', inclusive=False)[0]
+            'header': __text_between(element, f'<{tag} ', f'\">', inclusive=False)[0]
         }
         
         attributes = map['header'].split('" ')
@@ -44,7 +44,7 @@ def find_all(tag: str, data: str) -> list:
             if len(attribute) == 2:
                 map[attribute[0]] = attribute[1]
         
-        map['text'] = ''.join(__text_between(element, f'>', f'<', inclusive=False)[0]).strip()
+        map['text'] = ''.join(__text_between(element, '>', '<', inclusive=False))
         lst.append(map)
 
     return lst
