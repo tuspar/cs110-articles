@@ -1,0 +1,12 @@
+# Python Virtual Environment
+/bin
+/include
+/lib
+/lib64
+pyvenv.cfg
+
+# Data
+/data
+
+# Misc
+**/__pycache__
