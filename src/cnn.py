@@ -1,8 +1,15 @@
-from scrape import scraper
+'''Subclass of source implemented for CNN'''
+import doctest
+import python_ta
 
-class cnn:
-    remove = [39, 33, 29, 25, 8, 6, 5]
+import scraper
+from source import Source
 
+
+class CNN(Source):
+    '''Subclass of source implemented for CNN'''
+
+    remove: list[int] = [39, 33, 29, 25, 8, 6, 5]
 
     @staticmethod
     def get_links_2019() -> list[str]:
@@ -20,7 +27,6 @@ class cnn:
 
         return links[3:]
 
-
     @staticmethod
     def get_links_2020() -> list[str]:
         '''
@@ -30,14 +36,17 @@ class cnn:
         cnn2020 = scraper.get(url)
 
         links = []
+        divs = []
         for div in scraper.find_all('div', cnn2020):
             if 'class' in div and 'zn-body__paragraph' in div['class']:
-                for link in scraper.find_all('a', div['element']):
-                    if 'href' in link and 'special' not in link['href']:
-                        links.append(link['href'])
+                divs.append(div)
+
+        for div in divs:
+            for link in scraper.find_all('a', div['element']):
+                if 'href' in link and 'special' not in link['href']:
+                    links.append(link['href'])
 
         return links[1:]
-
 
     @staticmethod
     def get_article(link: str) -> str:
@@ -49,7 +58,7 @@ class cnn:
 
         markers = ['dCwndB', 'paragraph', 'cnnix-article__paragraph']
         for paragraph in scraper.find_all('p', article_source):
-            if 'class' in paragraph and any([marker in paragraph['class'] for marker in markers]):
+            if 'class' in paragraph and any(marker in paragraph['class'] for marker in markers):
                 article.append(paragraph['text'])
 
         for div in scraper.find_all('div', article_source):
@@ -62,4 +71,12 @@ class cnn:
 
 
 if __name__ == '__main__':
-    pass
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': ['doctest', 'scraper', 'source'],
+        'allowed-io': [],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200'],
+        'output-format': 'python_ta.reporters.ColorReporter'
+    })

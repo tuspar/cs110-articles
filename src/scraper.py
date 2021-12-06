@@ -1,4 +1,7 @@
+'''Custom web scraping implementation'''
 import urllib.request
+import doctest
+import python_ta
 
 
 def get(url):
@@ -20,13 +23,15 @@ def find_all(tag: str, data: str) -> list:
 
     Example Usage:
     >>> html = '<html><body><h1>My First Heading</h1><p class="content">My first paragraph.</p></body></html>'
-    >>> find_all('p', html)
-    [{
-        'element': '<p class="content">My first paragraph.</p>',
-        'header': 'class="content"',
-        'class': 'content',
-        'text': 'My first paragraph'
-    }]
+    >>> actual = find_all('p', html)
+    >>> expected = [{
+    ...     'element': '<p class="content">My first paragraph.</p>', 
+    ...     'header': 'class="content', 
+    ...     'class': 'content', 
+    ...     'text': 'My first paragraph.'
+    ... }]
+    >>> actual == expected
+    True
     '''
     lst = []
     elements = __text_between(data, f'<{tag} ', f'</{tag}>', inclusive=True)
@@ -49,12 +54,12 @@ def find_all(tag: str, data: str) -> list:
 
     return lst
 
-    
+
 def __text_between(data: str, a: str, b: str, inclusive: bool) -> list[str]:
     '''
     Returns text all instances of text between two selectors
 
-    >>> actual = text_between('abcdefghijklmnopqrstuvwxyzde11xy', 'de', 'xy', inclusive=False)
+    >>> actual = __text_between('abcdefghijklmnopqrstuvwxyzde11xy', 'de', 'xy', inclusive=False)
     >>> actual == ['fghijklmnopqrstuvw', '11']
     True
     '''
@@ -76,5 +81,18 @@ def __text_between(data: str, a: str, b: str, inclusive: bool) -> list[str]:
     
     return texts
 
+
 if __name__ == '__main__':
-    pass
+    '''
+        TODO:
+          - Fix Python-TA Error
+    '''
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': ['urllib.request', 'doctest'],
+        'allowed-io': [],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200'],
+        'output-format': 'python_ta.reporters.ColorReporter'
+    })

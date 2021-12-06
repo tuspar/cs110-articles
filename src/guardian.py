@@ -1,8 +1,15 @@
-from scrape import scraper
+'''Subclass of source implemented for The Guardian'''
+import doctest
+import python_ta
 
-class guardian:
+import scraper
+from source import Source
 
-    remove = []
+
+class Guardian(Source):
+    '''Subclass of source implemented for The Guardian'''
+
+    remove: list[int] = []
 
     @staticmethod
     def get_links_2019() -> list[str]:
@@ -28,12 +35,12 @@ class guardian:
                     links.append(link['href'])
         return links
 
-    
     @staticmethod
     def get_article(link: str) -> str:
         source = scraper.get(link)
 
         article = []
+        marker = 'no-marker'
         for div in scraper.find_all('div', source):
             if 'class' in div and 'article-body-commercial-selector' in div['class']:
                 paragraphs = scraper.find_all('p', div['element'])
@@ -47,4 +54,12 @@ class guardian:
 
 
 if __name__ == '__main__':
-    pass
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': ['doctest', 'scraper', 'source'],
+        'allowed-io': [],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200'],
+        'output-format': 'python_ta.reporters.ColorReporter'
+    })

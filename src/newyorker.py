@@ -1,15 +1,23 @@
-from scrape import scraper
+'''Subclass of source implemented for The New Yorker'''
+import doctest
+import python_ta
 
-class newyorker:
+import scraper
+from source import Source
 
-    remove = [8, 3]
+
+class NewYorker(Source):
+    '''Subclass of source implemented for The New Yorker'''
+
+    remove: list[int] = [8, 3]
 
     @staticmethod
     def get_links_2019() -> list[str]:
         '''
         Returns a list of the top 100 TNY articles from 2019
         '''
-        url = f"https://www.newyorker.com/culture/2019-in-review/the-top-twenty-five-new-yorker-stories-of-2019"
+        url = """https://www.newyorker.com/culture/2019-in-review/
+        the-top-twenty-five-new-yorker-stories-of-2019"""
         source = scraper.get(url)
 
         links = []
@@ -19,13 +27,13 @@ class newyorker:
                     links.append(link['href'])
         return links
 
-
     @staticmethod
     def get_links_2020() -> list[str]:
         '''
         Returns a list of the top 100 TNY articles from 2019
         '''
-        url = f"https://www.newyorker.com/culture/2020-in-review/the-top-twenty-five-new-yorker-stories-of-2020"
+        url = """https://www.newyorker.com/culture/2020-in-review/
+        the-top-twenty-five-new-yorker-stories-of-2020"""
         source = scraper.get(url)
 
         links = []
@@ -45,9 +53,18 @@ class newyorker:
 
         for paragraph in scraper.find_all('p', source):
             if 'class' in paragraph and 'paywall' in paragraph['class']:
-                    article.append(paragraph['text'])
-        
+                article.append(paragraph['text'])
+
         return ' '.join(article)
 
+
 if __name__ == '__main__':
-    pass
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': ['doctest', 'scraper', 'source'],
+        'allowed-io': [],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200'],
+        'output-format': 'python_ta.reporters.ColorReporter'
+    })
