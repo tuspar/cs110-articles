@@ -1,5 +1,6 @@
 from scrape.sources.cnn import cnn
 from scrape.sources.newyorker import newyorker
+from scrape.sources.guardian import guardian
 
 import json
 
@@ -32,7 +33,7 @@ def runner(source):
 
 
 def get_data():
-    sources = [cnn, newyorker]
+    sources = [cnn, newyorker, guardian]
     data = {}
     for source in sources:
         data[source.__name__] = runner(source)
