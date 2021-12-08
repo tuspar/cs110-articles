@@ -16,8 +16,8 @@ class NewYorker(Source):
         '''
         Returns a list of the top 100 TNY articles from 2019
         '''
-        url = """https://www.newyorker.com/culture/2019-in-review/
-        the-top-twenty-five-new-yorker-stories-of-2019"""
+        url = ('https://www.newyorker.com/culture/2019-in-review/' +
+        'the-top-twenty-five-new-yorker-stories-of-2019')
         source = scraper.get(url)
 
         links = []
