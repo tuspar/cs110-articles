@@ -42,7 +42,7 @@ def hypothesis_table(sources: list[Source], func: Callable[[float], float], path
         data[1].append(round(func(scores_2019), 2))
         data[2].append(round(func(scores_2020), 2))
         p = hypothesis.p_value(source, func)
-        data[3].append(p['test_statistic'])
+        data[3].append(round(p['test_statistic'], 2))
         data[4].append(p['p'])
 
     fig = go.Figure(data=[go.Table(header=dict(values=column_names),
