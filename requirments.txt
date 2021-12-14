@@ -1,8 +1,7 @@
 # Testing and code checking
 python-ta
 
-# Natural Language Processing
-textblob==0.17.1
-
 # Graphics and data visualization
 plotly==5.4.0
+numpy==1.21.4
+scipy==1.7.3

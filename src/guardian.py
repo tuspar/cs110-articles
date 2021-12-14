@@ -1,19 +1,29 @@
 '''Subclass of source implemented for The Guardian'''
 import doctest
 import python_ta
-
 import scraper
 from source import Source
+from article import Article
 
 
 class Guardian(Source):
     '''Subclass of source implemented for The Guardian'''
 
-    remove: list[int] = []
+    name: str
+    links_2019: list[str] = []
+    articles_2019: list[Article] = []
+    links_2020: list[str] = []
+    articles_2020: list[Article] = []
+    _remove: list[int] = []
 
-    @staticmethod
-    def get_links_2019() -> list[str]:
-        url = "https://www.theguardian.com/news/2019/dec/24/the-best-of-the-long-read-in-2019"
+
+    def _get_links_by_year(self, year) -> list[str]:
+        '''...'''
+        if year == '2019':
+            url = "https://www.theguardian.com/news/2019/dec/24/the-best-of-the-long-read-in-2019"
+        else:
+            url = "https://www.theguardian.com/news/2020/dec/22/the-best-of-the-long-read-in-2020"
+        
         source = scraper.get(url)
 
         links = []
@@ -23,20 +33,9 @@ class Guardian(Source):
                     links.append(link['href'])
         return links
 
-    @staticmethod
-    def get_links_2020() -> list[str]:
-        url = "https://www.theguardian.com/news/2020/dec/22/the-best-of-the-long-read-in-2020"
-        source = scraper.get(url)
 
-        links = []
-        for heading_2 in scraper.find_all('h2', source):
-            for link in scraper.find_all('a', heading_2['element']):
-                if 'href' in link:
-                    links.append(link['href'])
-        return links
-
-    @staticmethod
-    def get_article(link: str) -> str:
+    def _get_article(self, link: str) -> Article:
+        '''Returns the text in the article provided in the link'''
         source = scraper.get(link)
 
         article = []
@@ -50,14 +49,14 @@ class Guardian(Source):
             if 'class' in paragraph and marker in paragraph['class']:
                 article.append(paragraph['text'])
 
-        return ' '.join(article)
+        return Article(' '.join(article))
 
 
 if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': ['doctest', 'scraper', 'source'],
+        'extra-imports': ['doctest', 'scraper', 'source', 'article'],
         'allowed-io': [],
         'max-line-length': 100,
         'disable': ['R1705', 'C0200'],

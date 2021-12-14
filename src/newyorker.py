@@ -1,50 +1,37 @@
 '''Subclass of source implemented for The New Yorker'''
 import doctest
 import python_ta
-
 import scraper
 from source import Source
+from article import Article
 
 
 class NewYorker(Source):
     '''Subclass of source implemented for The New Yorker'''
 
-    remove: list[int] = [8, 3]
+    name: str
+    links_2019: list[str] = []
+    articles_2019: list[Article] = []
+    links_2020: list[str] = []
+    articles_2020: list[Article] = []
+    _remove: list[int] = [8, 3]
 
-    @staticmethod
-    def get_links_2019() -> list[str]:
-        '''
-        Returns a list of the top 100 TNY articles from 2019
-        '''
-        url = ('https://www.newyorker.com/culture/2019-in-review/' +
-        'the-top-twenty-five-new-yorker-stories-of-2019')
-        source = scraper.get(url)
+    def _get_links_by_year(self, year) -> list[str]:
+        '''...'''
+        url = (f'https://www.newyorker.com/culture/{year}-in-review/' +
+        f'the-top-twenty-five-new-yorker-stories-of-{year}')
+
+        html = scraper.get(url)
 
         links = []
-        for div in scraper.find_all('div', source):
+        for div in scraper.find_all('div', html):
             if 'class' in div and 'heading-h4' in div['class']:
                 for link in scraper.find_all('a', div['element']):
                     links.append(link['href'])
         return links
 
-    @staticmethod
-    def get_links_2020() -> list[str]:
-        '''
-        Returns a list of the top 100 TNY articles from 2019
-        '''
-        url = """https://www.newyorker.com/culture/2020-in-review/
-        the-top-twenty-five-new-yorker-stories-of-2020"""
-        source = scraper.get(url)
 
-        links = []
-        for div in scraper.find_all('div', source):
-            if 'class' in div and 'heading-h4' in div['class']:
-                for link in scraper.find_all('a', div['element']):
-                    links.append(link['href'])
-        return links
-
-    @staticmethod
-    def get_article(link: str) -> str:
+    def _get_article(self, link: str) -> Article:
         '''
         Returns the text in a TNY Live/Regular Story written between 2020-2019
         '''
@@ -55,14 +42,14 @@ class NewYorker(Source):
             if 'class' in paragraph and 'paywall' in paragraph['class']:
                 article.append(paragraph['text'])
 
-        return ' '.join(article)
+        return Article(' '.join(article))
 
 
 if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': ['doctest', 'scraper', 'source'],
+        'extra-imports': ['doctest', 'scraper', 'source', 'article'],
         'allowed-io': [],
         'max-line-length': 100,
         'disable': ['R1705', 'C0200'],
