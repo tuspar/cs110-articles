@@ -1,20 +1,25 @@
-import doctest
+"""Abstract Class for a news source"""
 import json
-import python_ta
 from article import Article
 
 
 class Source:
-    '''Abstract Class for a news source that can be scraped'''
+    """Abstract Class for a news source that can be scraped including json
+    serialization and loading
+    """
 
     name: str
+    links_2019: list[str]
+    articles_2019: list[Article]
+    links_2020: list[str]
+    articles_2020: list[Article]
+    _remove: list[int]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.name = self.__class__.__name__
 
-
     def get_links(self) -> tuple[list[str], list[str]]:
-        '''Sets and returns all 2019 and 2020 articles'''
+        """Sets and returns all 2019 and 2020 articles"""
 
         print(f'{self.name}: Retrieving 2019 Links')
         self.links_2019 = self._get_links_by_year('2019')
@@ -23,30 +28,27 @@ class Source:
 
         return self.links_2019, self.links_2020
 
-
-    def _get_links_by_year(self, year) -> list[str]:
-        '''
+    def _get_links_by_year(self, year: str) -> list[str]:
+        """
         Returns all source links from given year
-        
+
         Preconditions:
-          - url in ['2019', '2020']
-        '''
+            - year in ['2019', '2020']
+        """
         raise NotImplementedError
 
-
-    def get_article(self, link: str) -> Article:
-        '''Returns the text in the article provided in the link'''
+    def _get_article(self, link: str) -> Article:
+        """Returns the text in the article provided in the link"""
         raise NotImplementedError
 
-
-    def get_articles(self)-> tuple[list[Article], list[Article]]:
-        '''Gets all the articles from existing links'''
-        link_article_pairs = [('2019', self.links_2019, self.articles_2019), 
+    def get_articles(self) -> tuple[list[Article], list[Article]]:
+        """Gets all the articles from existing links"""
+        link_article_pairs = [('2019', self.links_2019, self.articles_2019),
             ('2020', self.links_2020, self.articles_2020)]
 
         for year, links, articles in link_article_pairs:
             for i, link in enumerate(links):
-                if not (i in self._remove):
+                if not i in self._remove:
                     print(f'{self.name}: Retrieving article {i + 1}, {year}')
                     articles.append(self._get_article(link))
     
@@ -54,6 +56,7 @@ class Source:
 
 
     def save(self, path: str) -> str:
+        """Serializes itself as json file and saves to path"""
         source_dict = {
             'name': self.name,
             'links_2019': self.links_2019,
@@ -65,7 +68,8 @@ class Source:
             file.write(json.dumps(source_dict))
 
     @staticmethod
-    def load(path) -> 'Source':
+    def load(path: str) -> 'Source':
+        """Loads source object from serialized json file"""
         with open(path, 'r') as file:
             source_dict = json.load(file)
 
@@ -79,6 +83,27 @@ class Source:
         return source
 
 
-    def get_scores(self):
-        return ([article.polarity for article in self.articles_2019], 
-            [article.polarity for article in self.articles_2020])
+    def get_scores(self) -> tuple[list[float], list[float]]:
+        """Returns 2019, 2020 polarity scores as tuple"""
+        return ([article.polarity for article in self.articles_2019],
+                [article.polarity for article in self.articles_2020])
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': ['json', 'article'],
+        'allowed-io': ['save', 'load', 'get_articles', 'get_links'],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200'],
+        'output-format': 'python_ta.reporters.ColorReporter'
+    })

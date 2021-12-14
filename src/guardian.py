@@ -1,13 +1,11 @@
-'''Subclass of source implemented for The Guardian'''
-import doctest
-import python_ta
+"""Subclass of source implemented for The Guardian"""
 import scraper
 from source import Source
 from article import Article
 
 
 class Guardian(Source):
-    '''Subclass of source implemented for The Guardian'''
+    """Subclass of source implemented for The Guardian"""
 
     name: str
     links_2019: list[str] = []
@@ -16,14 +14,13 @@ class Guardian(Source):
     articles_2020: list[Article] = []
     _remove: list[int] = []
 
-
-    def _get_links_by_year(self, year) -> list[str]:
-        '''...'''
+    def _get_links_by_year(self, year: str) -> list[str]:
+        """..."""
         if year == '2019':
             url = "https://www.theguardian.com/news/2019/dec/24/the-best-of-the-long-read-in-2019"
         else:
             url = "https://www.theguardian.com/news/2020/dec/22/the-best-of-the-long-read-in-2020"
-        
+
         source = scraper.get(url)
 
         links = []
@@ -33,9 +30,8 @@ class Guardian(Source):
                     links.append(link['href'])
         return links
 
-
     def _get_article(self, link: str) -> Article:
-        '''Returns the text in the article provided in the link'''
+        """Returns the text in the article provided in the link"""
         source = scraper.get(link)
 
         article = []
@@ -53,6 +49,14 @@ class Guardian(Source):
 
 
 if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={

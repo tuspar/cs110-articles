@@ -1,13 +1,13 @@
-'''Custom web scraping implementation'''
+"""Custom web scraping implementation"""
 import urllib.request
 import doctest
 import python_ta
 
 
 def get(url):
-    '''
+    """
     Returns raw HTML as a string
-    '''
+    """
     con = urllib.request.urlopen(url)
     bhtml = con.read()
     con.close()
@@ -16,7 +16,7 @@ def get(url):
 
 
 def find_all(tag: str, data: str) -> list:
-    '''
+    """
     Returns a list containing all the elements with the specified tag.
     Each element is mapped to a dictionary containing itself, all of
     it's attributes and the text contained in it and any sub-elements
@@ -32,15 +32,15 @@ def find_all(tag: str, data: str) -> list:
     ... }]
     >>> actual == expected
     True
-    '''
+    """
     lst = []
-    elements = __text_between(data, f'<{tag} ', f'</{tag}>', inclusive=True)
+    elements = text_between(data, f'<{tag} ', f'</{tag}>', inclusive=True)
     elements = [element for element in elements if element != '']
 
     for element in elements:
         map = {
             'element': element, 
-            'header': __text_between(element, f'<{tag} ', f'\">', inclusive=False)[0]
+            'header': text_between(element, f'<{tag} ', f'\">', inclusive=False)[0]
         }
         
         attributes = map['header'].split('" ')
@@ -49,20 +49,20 @@ def find_all(tag: str, data: str) -> list:
             if len(attribute) == 2:
                 map[attribute[0]] = attribute[1]
         
-        map['text'] = ''.join(__text_between(element, '>', '<', inclusive=False))
+        map['text'] = ''.join(text_between(element, '>', '<', inclusive=False))
         lst.append(map)
 
     return lst
 
 
-def __text_between(data: str, a: str, b: str, inclusive: bool) -> list[str]:
-    '''
+def text_between(data: str, a: str, b: str, inclusive: bool) -> list[str]:
+    """
     Returns text all instances of text between two selectors
 
-    >>> actual = __text_between('abcdefghijklmnopqrstuvwxyzde11xy', 'de', 'xy', inclusive=False)
+    >>> actual = text_between('abcdefghijklmnopqrstuvwxyzde11xy', 'de', 'xy', inclusive=False)
     >>> actual == ['fghijklmnopqrstuvw', '11']
     True
-    '''
+    """
     indices = []
     texts = []
     
@@ -83,10 +83,18 @@ def __text_between(data: str, a: str, b: str, inclusive: bool) -> list[str]:
 
 
 if __name__ == '__main__':
-    '''
+    """
         TODO:
           - Fix Python-TA Error
-    '''
+    """
+    import python_ta
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={

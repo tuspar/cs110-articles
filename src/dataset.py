@@ -1,9 +1,5 @@
-'''
-Main Dataset Management File
-'''
+"""Main Dataset Management File"""
 import os
-import doctest
-import python_ta
 
 from source import Source
 from cnn import CNN
@@ -11,9 +7,12 @@ from newyorker import NewYorker
 from guardian import Guardian
 import sentiment
 
-def get(dataset_folder):
-    """Get Dataset"""
-    lexicon = sentiment.get_lexicon()
+
+def get(dataset_folder: str, lexicon_path: str) -> list[Source]:
+    """Downloads and parses dataset from the internet
+    if local copy not available.
+    """
+    lexicon = sentiment.get_lexicon(lexicon_path)
     sources = [CNN(), NewYorker(), Guardian()]
 
     for i in range(len(sources)):
@@ -23,20 +22,28 @@ def get(dataset_folder):
         else:
             sources[i].get_links()
             sources[i].get_articles()
-            for articles in [sources[i].articles_2019, sources[i].articles_2020]:
-                for article in articles:
-                    article.score(lexicon)
+            score(sources[i], lexicon)
             sources[i].save(path)
 
     return sources
 
- 
-def score(source: Source, lexicon: dict[str: float]):
+
+def score(source: Source, lexicon: dict[str: float]) -> None:
+    """Scores all articles in the source object using given lexicon"""
     for articles in [source.articles_2019, source.articles_2020]:
         for article in articles:
             article.score(lexicon)
 
+
 if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={

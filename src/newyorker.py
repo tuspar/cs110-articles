@@ -1,13 +1,11 @@
-'''Subclass of source implemented for The New Yorker'''
-import doctest
-import python_ta
+"""Subclass of source implemented for The New Yorker"""
 import scraper
 from source import Source
 from article import Article
 
 
 class NewYorker(Source):
-    '''Subclass of source implemented for The New Yorker'''
+    """Subclass of source implemented for The New Yorker"""
 
     name: str
     links_2019: list[str] = []
@@ -16,10 +14,10 @@ class NewYorker(Source):
     articles_2020: list[Article] = []
     _remove: list[int] = [8, 3]
 
-    def _get_links_by_year(self, year) -> list[str]:
-        '''...'''
-        url = (f'https://www.newyorker.com/culture/{year}-in-review/' +
-        f'the-top-twenty-five-new-yorker-stories-of-{year}')
+    def _get_links_by_year(self, year: str) -> list[str]:
+        """..."""
+        url = (f'https://www.newyorker.com/culture/{year}-in-review/'
+               + f'the-top-twenty-five-new-yorker-stories-of-{year}')
 
         html = scraper.get(url)
 
@@ -30,11 +28,8 @@ class NewYorker(Source):
                     links.append(link['href'])
         return links
 
-
     def _get_article(self, link: str) -> Article:
-        '''
-        Returns the text in a TNY Live/Regular Story written between 2020-2019
-        '''
+        """Returns the text in a TNY Live/Regular Story written between 2020-2019"""
         source = scraper.get(link)
         article = []
 
@@ -46,6 +41,14 @@ class NewYorker(Source):
 
 
 if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={

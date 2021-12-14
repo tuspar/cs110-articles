@@ -6,12 +6,13 @@ import plot
 DATASET_FOLDER = 'data'
 OUT_FOLDER = 'out'
 P_VALUE_TESTING_REPETITIONS = 5000
+LEXICON_PATH = 'en-sentiment.xml'
 
 for folder in [DATASET_FOLDER, OUT_FOLDER]:
     if not os.path.isdir(folder):
         os.mkdir(folder)
 
-sources = dataset.get(DATASET_FOLDER)
+sources = dataset.get(DATASET_FOLDER, LEXICON_PATH)
 
 plot.combined_source_dist(sources, 'Combined Polarity Distribution', f'{OUT_FOLDER}/combined_dist.html')
 for source in sources:

@@ -1,11 +1,13 @@
-from textblob import TextBlob
+"""Sentiment Analysis Module"""
 import scraper
 
-def get_lexicon():
-    with open('en-sentiment.xml', 'r') as f:
+
+def get_lexicon(path: str) -> dict[str: float]:
+    """Parsers xml lexicon into a dictionary. Key is the word and value is the polarity"""
+    with open(path, 'r') as f:
         xml = f.read()
-        words = scraper.__text_between(xml, 'form="', '"', inclusive=False)
-        polarities = scraper.__text_between(xml, 'polarity="', '"', inclusive=False)
+        words = scraper.text_between(xml, 'form="', '"', inclusive=False)
+        polarities = scraper.text_between(xml, 'polarity="', '"', inclusive=False)
 
     lexicon = {}
     for i, word in enumerate(words):
@@ -13,8 +15,8 @@ def get_lexicon():
     return lexicon
 
 
-def _clean(text):
-    """ Remove hyperlinks and markup """
+def _clean(text: str) -> str:
+    """Remove hyperlinks and markup """
     PUNCTUATION = '!\"#$%&()*+,-./:;<=>?@[]^_`{|}~'
     for p in PUNCTUATION:
         text = text.replace(p, '')
@@ -25,8 +27,7 @@ def _clean(text):
 
 
 def _count_keywords(lexicon: dict[str: float], word_list: list[str]) -> dict[str, int]:
-    """Return a frequency mapping of the Lexicon keywords in text.
-    """
+    """Return a frequency mapping of the Lexicon keywords in text."""
     occurrences_so_far = {}
 
     for word in word_list:
@@ -54,13 +55,30 @@ def _calculate_average_intensity(lexicon: dict[str: float], occurrences: dict[st
         return total_intensity / num_keywords
 
 
-def polarity(lexicon: dict[str: float], text: str):
+def polarity(lexicon: dict[str: float], text: str) -> float:
+    """Return the polarity of a given string"""
     words = _clean(text)
     occurences = _count_keywords(lexicon, words)
-    polarity = _calculate_average_intensity(lexicon, occurences)
+    polarity_value = _calculate_average_intensity(lexicon, occurences)
 
-    return polarity * 100
+    return polarity_value * 100
 
 
-def text_blob(lexicon, text):
-    return TextBlob(text).sentiment.polarity * 100
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': ['scraper'],
+        'allowed-io': ['get_lexicon'],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200'],
+        'output-format': 'python_ta.reporters.ColorReporter'
+    })
