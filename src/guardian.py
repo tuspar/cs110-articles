@@ -7,11 +7,6 @@ from article import Article
 class Guardian(Source):
     """Subclass of source implemented for The Guardian"""
 
-    name: str
-    links_2019: list[str] = []
-    articles_2019: list[Article] = []
-    links_2020: list[str] = []
-    articles_2020: list[Article] = []
     _remove: list[int] = []
 
     def _get_links_by_year(self, year: str) -> list[str]:

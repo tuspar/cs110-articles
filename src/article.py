@@ -5,7 +5,12 @@ import sentiment
 
 @dataclass
 class Article:
-    """Article Dataclass"""
+    """Article Dataclass
+
+    Instance Attributes:
+       - body: The text within the article
+       - polarity: The 'happiness' of the article
+    """
 
     body: str
     polarity: float

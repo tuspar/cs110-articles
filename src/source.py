@@ -6,6 +6,14 @@ from article import Article
 class Source:
     """Abstract Class for a news source that can be scraped including json
     serialization and loading
+
+    Instance Attributes:
+       - name: Name of the media
+       - links_2019: List containing all the links from 2019
+       - articles_2019: List containing all the article objects parsed in 2019
+       - links_2020: List containing all the links from 2020
+       - articles_2019: List containing all the article objects parsed in 2020
+       - _remove: Articles to be removed
     """
 
     name: str
@@ -43,17 +51,18 @@ class Source:
 
     def get_articles(self) -> tuple[list[Article], list[Article]]:
         """Gets all the articles from existing links"""
+        self.articles_2019 = []
+        self.articles_2020 = []
         link_article_pairs = [('2019', self.links_2019, self.articles_2019),
-            ('2020', self.links_2020, self.articles_2020)]
+                              ('2020', self.links_2020, self.articles_2020)]
 
         for year, links, articles in link_article_pairs:
             for i, link in enumerate(links):
-                if not i in self._remove:
+                if i not in self._remove:
                     print(f'{self.name}: Retrieving article {i + 1}, {year}')
                     articles.append(self._get_article(link))
-    
-        return self.articles_2019, self.articles_2019
 
+        return self.articles_2019, self.articles_2019
 
     def save(self, path: str) -> str:
         """Serializes itself as json file and saves to path"""
@@ -81,7 +90,6 @@ class Source:
         source.articles_2020 = [Article.load(article) for article in source_dict['articles_2020']]
 
         return source
-
 
     def get_scores(self) -> tuple[list[float], list[float]]:
         """Returns 2019, 2020 polarity scores as tuple"""
